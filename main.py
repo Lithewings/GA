@@ -123,6 +123,7 @@ if __name__ == "__main__":
     pop = np.random.randint(2, size=(POP_SIZE, DNA_SIZE * 2))  # matrix (POP_SIZE, DNA_SIZE)
     count=0
     #记录每次收敛的最大值：y，辅助以x构成折线图
+    #
     each_y=[]
     # 收敛矩阵
     pop_matrix = []
