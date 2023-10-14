@@ -14,7 +14,7 @@ time_start = time.time()
 
 e=math.e
 DNA_SIZE = 24
-POP_SIZE = 800
+POP_SIZE = 1200
 CROSSOVER_RATE = 0.8
 MUTATION_RATE = 0.01
 MUTATION_AMOUNT=0.05
@@ -22,7 +22,7 @@ N_GENERATIONS = 48
 ELITE_RATE=0.50
 X_BOUND = [-4, 4]
 Y_BOUND = [-4, 4]
-CHECKTIME = 100 #独立验证次数
+CHECKTIME = 25 #独立验证次数
 CATASTROPHE_RATE = 0.01
 #比较参数：POP_SIZE = 400，POP_SIZE = 400（精算）；POP_SIZE = 200,N_GENERATIONS = 48（速算）
 def F(x_1, x_2):
@@ -191,5 +191,5 @@ if __name__ == "__main__":
     print_info(pop)
     # plt.ioff()
     # plot_3d(ax)
-
+    input("按任意键结束")
 
