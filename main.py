@@ -14,7 +14,7 @@ time_start = time.time()
 
 e=math.e
 DNA_SIZE = 24
-POP_SIZE = 1200
+POP_SIZE = 800
 CROSSOVER_RATE = 0.8
 MUTATION_RATE = 0.01
 MUTATION_AMOUNT=0.05
@@ -22,7 +22,7 @@ N_GENERATIONS = 48
 ELITE_RATE=0.50
 X_BOUND = [-4, 4]
 Y_BOUND = [-4, 4]
-CHECKTIME = 10 #独立验证次数
+CHECKTIME = 100 #独立验证次数
 CATASTROPHE_RATE = 0.01
 #比较参数：POP_SIZE = 400，POP_SIZE = 400（精算）；POP_SIZE = 200,N_GENERATIONS = 48（速算）
 def F(x_1, x_2):
@@ -180,7 +180,7 @@ if __name__ == "__main__":
     plt.rcParams['font.sans-serif'] = ['SimHei']
     plt.rcParams['axes.unicode_minus'] = False
 
-    plt.ylim(0, 0.2)
+    plt.ylim(0, 0.5)
     plt.xlabel('实验次数')
     plt.ylabel('最终收敛值')
     plt.suptitle('独立测试中各种群最终收敛值', fontsize=20)
@@ -192,4 +192,27 @@ if __name__ == "__main__":
     # plt.ioff()
     # plot_3d(ax)
     input("按任意键结束")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
