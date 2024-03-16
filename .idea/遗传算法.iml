@@ -11,7 +11,7 @@
       <sourceFolder url="file://$MODULE_DIR$/venv/share" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/venv" />
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="Python 3.10 (GA)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">
