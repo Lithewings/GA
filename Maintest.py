@@ -1,21 +1,44 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from PyQt5 import uic
 from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D
 import math
 import random
 import time
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+from PyQt5 import QtWidgets, uic
+from PyQt5.QtWidgets import QVBoxLayout, QLineEdit, QLabel, QGroupBox, QPushButton, QApplication, QWidget
+from PyQt5.uic import loadUi
+
+
+
+
+
+
 
 
 
 e=math.e
 DNA_SIZE = 24
-POP_SIZE = 800
+POP_SIZE = 100
 CROSSOVER_RATE = 0.8
 MUTATION_RATE = 0.01
 MUTATION_AMOUNT=0.05
 N_GENERATIONS = 48
-CHECKTIME = 100 #独立验证次数
+CHECKTIME = 20 #独立验证次数
+
+#POP_SIZE = 100
+#CROSSOVER_RATE = 0.8
+#MUTATION_RATE = 0.01
+#MUTATION_AMOUNT=0.05
+#N_GENERATIONS = 48
+#CHECKTIME = 20 #独立验证次数
+
+
+
+
 
 
 ELITE_RATE=0.50
@@ -387,6 +410,7 @@ def GA(q):
     # plot_3d(ax)
     x_pattern0 = x
     y_pattern0 = each_y
+    print(q)
     if(q == 1):
         return x_pattern1,y_pattern1
     elif(q==0):
@@ -402,106 +426,69 @@ from PyQt5.QtGui import QPixmap
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
-
-
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.uic import loadUi
 
 
 
-class MyForm(QWidget):
-    def __init__(self):
-        super().__init__()
-        loadUi('UI.ui', self)  # Replace 'your_ui_file.ui' with the path to your .ui file
-        self.show()
-
-#if __name__ == '__main__':
-    #app = QApplication(sys.argv)
-    #window = MyForm()
-    #sys.exit(app.exec_())
 
 
 
+POP_SIZE = 100
+CROSSOVER_RATE = 0.8
+MUTATION_RATE = 0.01
+MUTATION_AMOUNT=0.05
+N_GENERATIONS = 48
+CHECKTIME = 20 #独立验证次数
 
 
 
 class GeneticAlgorithmUI(QWidget):
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("遗传算法界面")
         self.initUI()
 
     def initUI(self):
-        layout = QHBoxLayout()
+        uic.loadUi("UI.ui", self)
+        #触发器
 
-        # Input area
-        input_layout = QVBoxLayout()
+        self.pushButton_17.clicked.connect(self.submit_parameters)
+        self.pushButton_16.clicked.connect(lambda: self.run_algorithm("standard_convergence", 0))
+        self.pushButton_14.clicked.connect(lambda: self.run_algorithm("adaptive_convergence", 0))
+        self.pushButton_13.clicked.connect(lambda: self.run_algorithm("standard_speed", 1))
+        self.pushButton_15.clicked.connect(lambda: self.run_algorithm("adaptive_speed", 1))
 
-        self.population_size_input = QLineEdit()
-        self.initial_crossover_rate_input = QLineEdit()
-        self.initial_mutation_rate_input = QLineEdit()
-        self.mutation_amount_input = QLineEdit()
-        self.iterations_input = QLineEdit()
-        self.validation_iterations_input = QLineEdit()
-        input_layout.addWidget(QLabel("种群大小:"))
-        input_layout.addWidget(self.population_size_input)
-        input_layout.addWidget(QLabel("初始交叉率:"))
-        input_layout.addWidget(self.initial_crossover_rate_input)
-        input_layout.addWidget(QLabel("初始变异率:"))
-        input_layout.addWidget(self.initial_mutation_rate_input)
-        input_layout.addWidget(QLabel("变异程度:"))
-        input_layout.addWidget(self.mutation_amount_input)
-        input_layout.addWidget(QLabel("迭代次数:"))
-        input_layout.addWidget(self.iterations_input)
-        input_layout.addWidget(QLabel("独立验证次数:"))
-        input_layout.addWidget(self.validation_iterations_input)
-        input_group = QGroupBox("输入区域")
-        input_group.setLayout(input_layout)
-        layout.addWidget(input_group)
+    def submit_parameters(self):
+        # 根据控件名称获取对应的控件对象
+        global POP_SIZE, CROSSOVER_RATE, MUTATION_RATE, MUTATION_AMOUNT, N_GENERATIONS, CHECKTIM
+        POP_SIZE= int(self.textEdit_13.toPlainText())
+        CROSSOVER_RATE = float(self.textEdit_14.toPlainText())
+        MUTATION_RATE = float(self.textEdit_15.toPlainText())
+        MUTATION_AMOUNT =float( self.textEdit_16.toPlainText())
+        N_GENERATIONS = int(self.textEdit_17.toPlainText())
+        CHECKTIME = int(self.textEdit_18.toPlainText())
 
-        # Algorithm buttons
-        alg_buttons_layout = QVBoxLayout()
+        print("目前的参数如下",POP_SIZE, CROSSOVER_RATE, MUTATION_RATE, MUTATION_AMOUNT, N_GENERATIONS, CHECKTIME)
 
-        self.standard_convergence_button = QPushButton("标准遗传算法的收敛值分析")
-        self.standard_convergence_button.clicked.connect(lambda: self.run_algorithm("standard_convergence", 0))
-        self.adaptive_convergence_button = QPushButton("自适应遗传算法的收敛值分析")
-        self.adaptive_convergence_button.clicked.connect(lambda: self.run_algorithm("adaptive_convergence", 0))
-        self.standard_speed_button = QPushButton("标准遗传算法的收敛速度分析")
-        self.standard_speed_button.clicked.connect(lambda: self.run_algorithm("standard_speed", 1))
-        self.adaptive_speed_button = QPushButton("自适应遗传算法的收敛速度分析")
-        self.adaptive_speed_button.clicked.connect(lambda: self.run_algorithm("adaptive_speed", 1))
-        alg_buttons_layout.addWidget(self.standard_convergence_button)
-        alg_buttons_layout.addWidget(self.adaptive_convergence_button)
-        alg_buttons_layout.addWidget(self.standard_speed_button)
-        alg_buttons_layout.addWidget(self.adaptive_speed_button)
+    #     # Algorithm buttons
 
-        layout.addLayout(alg_buttons_layout)
-
-        # Output image groups
-        self.standard_image_group = QGroupBox("标准遗传算法结果")
-        self.standard_image_layout = QVBoxLayout()
-        self.standard_image_group.setLayout(self.standard_image_layout)
-        layout.addWidget(self.standard_image_group)
-
-        self.adaptive_image_group = QGroupBox("自适应遗传算法结果")
-        self.adaptive_image_layout = QVBoxLayout()
-        self.adaptive_image_group.setLayout(self.adaptive_image_layout)
-        layout.addWidget(self.adaptive_image_group)
-
-        self.setLayout(layout)
 
     def run_algorithm(self, algorithm_type=None, analysis_type=None):
         global POP_SIZE, CROSSOVER_RATE, MUTATION_RATE, MUTATION_AMOUNT, N_GENERATIONS, CHECKTIME
-        POP_SIZE = int(self.population_size_input.text())
-        CROSSOVER_RATE = float(self.initial_crossover_rate_input.text())
-        MUTATION_RATE = float(self.initial_mutation_rate_input.text())
-        MUTATION_AMOUNT = float(self.mutation_amount_input.text())
-        N_GENERATIONS = int(self.iterations_input.text())
-        CHECKTIME = int(self.validation_iterations_input.text())
+        POP_SIZE = int(self.textEdit_13.toPlainText())
+        CROSSOVER_RATE = float(self.textEdit_14.toPlainText())
+        MUTATION_RATE = float(self.textEdit_15.toPlainText())
+        MUTATION_AMOUNT = float(self.textEdit_16.toPlainText())
+        N_GENERATIONS = int(self.textEdit_17.toPlainText())
+        CHECKTIME = int(self.textEdit_18.toPlainText())
 
+
+        print( "跑算法的函数被调用了！")
         if algorithm_type == "standard_convergence":
             # 调用标准遗传算法函数，收敛值分析
-            x, y = GA(analysis_type)
+            x, y = GA(analysis_type,)
             self.create_standard_image_amount(x, y)
         elif algorithm_type == "adaptive_convergence":
             # 调用自适应遗传算法函数，收敛值分析
@@ -522,27 +509,35 @@ class GeneticAlgorithmUI(QWidget):
         # 添加新的图片
         layout.addWidget(image)
 
-    def clear_images(self, layout):
-        # 移除布局中的所有部件
-        for i in reversed(range(layout.count())):
-            layout_item = layout.itemAt(i)
-            if layout_item:
-                widget = layout_item.widget()
-                if widget:
-                    widget.setParent(None)
-
     def create_standard_image_amount(self, x, y):
-        fig = Figure(figsize=(5, 4))
+        fig = plt.Figure(figsize=(3.99, 3.89))
+
         ax = fig.add_subplot(111)
         ax.plot(x, y)
         ax.set_xlabel('实验次数')
         ax.set_ylabel('最终收敛值')
         ax.set_title('独立测试中各种群最终收敛值', fontsize=20)
         ax.set_ylim(0, 1)
+
+        # Create a Canvas object from the figure
         canvas = FigureCanvas(fig)
-        self.display_image(self.standard_image_layout, canvas)
+        # Convert Canvas to QPixmap
+        pixmap = QPixmap(canvas.size())
+        canvas.render(pixmap)
+        # Set the QPixmap to the QLabel
+        self.label_22.setPixmap(pixmap)
+
+
+
+
+
+
+
+
     def create_standard_image_speed(self, x, y):
-        fig = Figure(figsize=(5, 4))
+
+        fig = plt.Figure(figsize=(3.99, 3.89))
+
         ax = fig.add_subplot(111)
         ax.set_ylim(0, 1)
         for i in range(CHECKTIME):
@@ -550,21 +545,36 @@ class GeneticAlgorithmUI(QWidget):
             ax.set_xlabel('迭代次数')
             ax.set_ylabel('每世代各种群的收敛值')
             ax.set_title('收敛速度分析', fontsize=20)
+
+        # Create a Canvas object from the figure
         canvas = FigureCanvas(fig)
-        self.display_image(self.standard_image_layout, canvas)
+        # Convert Canvas to QPixmap
+        pixmap = QPixmap(canvas.size())
+        canvas.render(pixmap)
+        # Set the QPixmap to the QLabel
+        self.label_22.setPixmap(pixmap)
 
     def create_adaptive_image_amount(self,x,y):
-        fig = Figure(figsize=(5, 4))
+        fig = plt.Figure(figsize=(3.99, 3.89))
+
         ax = fig.add_subplot(111)
         ax.plot(x, y)
         ax.set_xlabel('实验次数')
         ax.set_ylabel('最终收敛值')
         ax.set_title('独立测试中各种群最终收敛值', fontsize=20)
         ax.set_ylim(0, 1)
+
+        # Create a Canvas object from the figure
         canvas = FigureCanvas(fig)
-        self.display_image(self.adaptive_image_layout, canvas)
+        # Convert Canvas to QPixmap
+        pixmap = QPixmap(canvas.size())
+        canvas.render(pixmap)
+        # Set the QPixmap to the QLabel
+        self.label_23.setPixmap(pixmap)
+
     def create_adaptive_image_speed(self,x,y):
-        fig = Figure(figsize=(5, 4))
+        fig = plt.Figure(figsize=(3.99, 3.89))
+
 
         ax = fig.add_subplot(111)
         ax.set_ylim(0, 1)
@@ -574,10 +584,18 @@ class GeneticAlgorithmUI(QWidget):
             ax.set_ylabel('每世代各种群的收敛值')
             ax.set_title('收敛速度分析', fontsize=20)
 
-        canvas = FigureCanvas(fig)
-        self.display_image(self.adaptive_image_layout, canvas)
+            # Create a Canvas object from the figure
+            canvas = FigureCanvas(fig)
+            # Convert Canvas to QPixmap
+            pixmap = QPixmap(canvas.size())
+            canvas.render(pixmap)
+            # Set the QPixmap to the QLabel
+            self.label_23.setPixmap(pixmap)
+
+
 
 if __name__ == '__main__':
+    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)
     window = GeneticAlgorithmUI()
     window.show()
