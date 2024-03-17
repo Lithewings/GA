@@ -355,6 +355,10 @@ def GA():
     plt.ylabel('每世代各种群的收敛值')
     plt.suptitle('收敛速度分析', fontsize=20)
     #plt.show()
+    final_x = x_axis_for_2d
+    final_y = pop_matrix[i]
+
+
 
     x = []
     for i in range(CHECKTIME):
@@ -374,9 +378,12 @@ def GA():
     print_info(pop)
     # plt.ioff()
     # plot_3d(ax)
-    final_x=x
-    final_y=each_y
-    return final_x,final_y
+    i = 0
+    while(i == 0):
+        return final_x,final_y
+
+
+
 
 import sys
 import numpy as np
@@ -452,16 +459,6 @@ class GeneticAlgorithmUI(QWidget):
 
         layout.addLayout(algorithm_layout)
 
-        # Run button
-        self.run_button = QPushButton("运行")
-        self.run_button.clicked.connect(self.run_algorithm)
-        layout.addWidget(self.run_button)
-
-        # Clear button
-        self.clear_button = QPushButton("清除图片")
-        self.clear_button.clicked.connect(self.clear_images)
-        layout.addWidget(self.clear_button)
-
         self.setLayout(layout)
 
     def run_algorithm(self, algorithm_type=None):
@@ -476,11 +473,11 @@ class GeneticAlgorithmUI(QWidget):
         if algorithm_type == "standard":
             # 调用标准遗传算法函数
             x,y=GA()
-            self.create_standard_image(x,y)
+            self.create_standard_image_speed(x,y)
         elif algorithm_type == "adaptive":
             # 调用自适应遗传算法函数
             x,y=AGA()
-            self.create_adaptive_image(x,y)
+            self.create_adaptive_image_amount(x,y)
 
     def display_image(self, layout, image):
         # 清除原有的图片
@@ -497,7 +494,7 @@ class GeneticAlgorithmUI(QWidget):
                 if widget:
                     widget.setParent(None)
 
-    def create_standard_image(self, x, y):
+    def create_standard_image_amount(self, x, y):
         fig = Figure(figsize=(5, 4))
         ax = fig.add_subplot(111)
         ax.plot(x, y)
@@ -507,9 +504,18 @@ class GeneticAlgorithmUI(QWidget):
         ax.set_ylim(0, 1)
         canvas = FigureCanvas(fig)
         self.display_image(self.standard_image_layout, canvas)
+    def create_standard_image_speed(self, x, y):
+        fig = Figure(figsize=(5, 4))
+        ax = fig.add_subplot(111)
+        ax.plot(x, y)
+        ax.set_xlabel('迭代次数')
+        ax.set_ylabel('每世代各种群的收敛值')
+        ax.set_title('收敛速度分析', fontsize=20)
+        ax.set_ylim(0, 1)
+        canvas = FigureCanvas(fig)
+        self.display_image(self.standard_image_layout, canvas)
 
-
-    def create_adaptive_image(self,x,y):
+    def create_adaptive_image_amount(self,x,y):
         fig = Figure(figsize=(5, 4))
         ax = fig.add_subplot(111)
         ax.plot(x, y)
@@ -519,7 +525,16 @@ class GeneticAlgorithmUI(QWidget):
         ax.set_ylim(0, 1)
         canvas = FigureCanvas(fig)
         self.display_image(self.adaptive_image_layout, canvas)
-
+    def create_adaptive_image_speed(self,x,y):
+        fig = Figure(figsize=(5, 4))
+        ax = fig.add_subplot(111)
+        ax.plot(x, y)
+        ax.set_xlabel('迭代次数')
+        ax.set_ylabel('每世代各种群的收敛值')
+        ax.set_title('收敛速度分析', fontsize=20)
+        ax.set_ylim(0, 1)
+        canvas = FigureCanvas(fig)
+        self.display_image(self.adaptive_image_layout, canvas)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
