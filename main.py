@@ -6,7 +6,7 @@ import math
 import random
 import time
 
-time_start = time.time()
+
 
 e=math.e
 DNA_SIZE = 24
@@ -23,11 +23,6 @@ X_BOUND = [-4, 4]
 Y_BOUND = [-4, 4]
 CATASTROPHE_RATE = 0.01
 #比较参数：POP_SIZE = 400，POP_SIZE = 400（精算）；POP_SIZE = 200,N_GENERATIONS = 48（速算）
-
-class Chart:
-    def __init__(self, x_data, y_data):
-        self.x_data = x_data
-        self.y_data = y_data
 
 def AGA():
     def F(x_1, x_2):
@@ -158,9 +153,9 @@ def AGA():
         print(i+1,":",CHECKTIME)
         pop = np.random.randint(2, size=(POP_SIZE, DNA_SIZE * 2))
     #print(pop_matrix)
-    time_end = time.time()
-    time_c = time_end - time_start
-    print('耗时', time_c, 's')
+    #time_end = time.time()
+    #time_c = time_end - time_start
+    #print('耗时', time_c, 's')
 
 
 
@@ -195,7 +190,9 @@ def AGA():
     print_info(pop)
     # plt.ioff()
     # plot_3d(ax)
-
+    final_x=x
+    final_y=each_y
+    return final_x,final_y#决定最后输出什么类型的图表
 
 def GA():
     def F(x_1, x_2):
@@ -341,11 +338,12 @@ def GA():
         print(i + 1, ":", CHECKTIME)
         pop = np.random.randint(2, size=(POP_SIZE, DNA_SIZE * 2))
     # print(pop_matrix)
-    time_end = time.time()
-    time_c = time_end - time_start
-    print('耗时', time_c, 's')
+    #time_end = time.time()
+    #time_c = time_end - time_start
+    #print('耗时', time_c, 's')
 
     # 收敛过程
+
     x_axis_for_2d = np.arange(0, N_GENERATIONS, 1)
     for i in range(CHECKTIME):
         plt.plot(x_axis_for_2d, pop_matrix[i])
@@ -376,8 +374,9 @@ def GA():
     print_info(pop)
     # plt.ioff()
     # plot_3d(ax)
-
-
+    final_x=x
+    final_y=each_y
+    return final_x,final_y
 
 import sys
 import numpy as np
@@ -465,10 +464,6 @@ class GeneticAlgorithmUI(QWidget):
 
         self.setLayout(layout)
 
-        # Track image count in each group
-        self.standard_image_count = 0
-        self.adaptive_image_count = 0
-
     def run_algorithm(self, algorithm_type=None):
         global POP_SIZE, CROSSOVER_RATE, MUTATION_RATE, MUTATION_AMOUNT, N_GENERATIONS, CHECKTIME
         POP_SIZE = int(self.population_size_input.text())
@@ -480,49 +475,56 @@ class GeneticAlgorithmUI(QWidget):
 
         if algorithm_type == "standard":
             # 调用标准遗传算法函数
-            GA()
-            self.display_image(self.standard_image_layout, self.create_standard_image(), self.standard_image_count)
-            self.standard_image_count += 1
+            x,y=GA()
+            self.create_standard_image(x,y)
         elif algorithm_type == "adaptive":
             # 调用自适应遗传算法函数
-            AGA()
-            self.display_image(self.adaptive_image_layout, self.create_adaptive_image(), self.adaptive_image_count)
-            self.adaptive_image_count += 1
+            x,y=AGA()
+            self.create_adaptive_image(x,y)
 
-    def display_image(self, layout, image, image_count):
-        if image_count >= 2:
-            self.clear_images(layout)
+    def display_image(self, layout, image):
+        # 清除原有的图片
+        self.clear_images(layout)
+        # 添加新的图片
         layout.addWidget(image)
 
     def clear_images(self, layout):
+        # 移除布局中的所有部件
         for i in reversed(range(layout.count())):
-            layout.itemAt(i).widget().setParent(None)
+            layout_item = layout.itemAt(i)
+            if layout_item:
+                widget = layout_item.widget()
+                if widget:
+                    widget.setParent(None)
 
-    def create_standard_image(self):
+    def create_standard_image(self, x, y):
         fig = Figure(figsize=(5, 4))
-        canvas = FigureCanvas(fig)
         ax = fig.add_subplot(111)
-        ax.plot(np.random.rand(10))
-        ax.set_title('Standard Genetic Algorithm Result')
-        ax.set_xlabel('X')
-        ax.set_ylabel('Y')
-        return canvas
+        ax.plot(x, y)
+        ax.set_xlabel('实验次数')
+        ax.set_ylabel('最终收敛值')
+        ax.set_title('独立测试中各种群最终收敛值', fontsize=20)
+        ax.set_ylim(0, 1)
+        canvas = FigureCanvas(fig)
+        self.display_image(self.standard_image_layout, canvas)
 
-    def create_adaptive_image(self):
+
+    def create_adaptive_image(self,x,y):
         fig = Figure(figsize=(5, 4))
-        canvas = FigureCanvas(fig)
         ax = fig.add_subplot(111)
-        ax.plot(np.random.rand(10))
-        ax.set_title('Adaptive Genetic Algorithm Result')
-        ax.set_xlabel('X')
-        ax.set_ylabel('Y')
-        return canvas
+        ax.plot(x, y)
+        ax.set_xlabel('实验次数')
+        ax.set_ylabel('最终收敛值')
+        ax.set_title('独立测试中各种群最终收敛值', fontsize=20)
+        ax.set_ylim(0, 1)
+        canvas = FigureCanvas(fig)
+        self.display_image(self.adaptive_image_layout, canvas)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = GeneticAlgorithmUI()
     window.show()
     sys.exit(app.exec_())
-
 
 
