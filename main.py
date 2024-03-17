@@ -24,7 +24,7 @@ Y_BOUND = [-4, 4]
 CATASTROPHE_RATE = 0.01
 #比较参数：POP_SIZE = 400，POP_SIZE = 400（精算）；POP_SIZE = 200,N_GENERATIONS = 48（速算）
 
-def AGA():
+def AGA(q):
     def F(x_1, x_2):
         n = 2
         a = 20
@@ -163,7 +163,6 @@ def AGA():
     x_axis_for_2d = np.arange(0, N_GENERATIONS, 1)
     for i in range(CHECKTIME):
         plt.plot(x_axis_for_2d,pop_matrix[i])
-
     plt.rcParams['font.sans-serif'] = ['SimHei']
     plt.rcParams['axes.unicode_minus'] = False
 
@@ -171,6 +170,9 @@ def AGA():
     plt.ylabel('每世代各种群的收敛值')
     plt.suptitle('收敛速度分析', fontsize=20)
     #plt.show()
+    x_pattern1=x_axis_for_2d
+    y_pattern1_matrix=pop_matrix
+
 
     x = []
     for i in range(CHECKTIME):
@@ -190,11 +192,16 @@ def AGA():
     print_info(pop)
     # plt.ioff()
     # plot_3d(ax)
-    final_x=x
-    final_y=each_y
-    return final_x,final_y#决定最后输出什么类型的图表
-
-def GA():
+    x_pattern0 = x
+    y_pattern0 = each_y
+    if (q == 0):#收敛值分析
+        return x_pattern0,y_pattern0#决定最后输出什么类型的图表
+    elif(q == 1) :#收敛速度分析
+        return  x_pattern1,y_pattern1_matrix
+    else:
+        print("问题在这里")
+        print(q)
+def GA(q):
     def F(x_1, x_2):
         n = 2
         a = 20
@@ -355,8 +362,8 @@ def GA():
     plt.ylabel('每世代各种群的收敛值')
     plt.suptitle('收敛速度分析', fontsize=20)
     #plt.show()
-    final_x = x_axis_for_2d
-    final_y = pop_matrix[i]
+    x_pattern1 = x_axis_for_2d
+    y_pattern1 = pop_matrix
 
 
 
@@ -378,10 +385,12 @@ def GA():
     print_info(pop)
     # plt.ioff()
     # plot_3d(ax)
-    i = 0
-    while(i == 0):
-        return final_x,final_y
-
+    x_pattern0 = x
+    y_pattern0 = each_y
+    if(q == 1):
+        return x_pattern1,y_pattern1
+    elif(q==0):
+        return x_pattern0,y_pattern0
 
 
 
@@ -434,34 +443,38 @@ class GeneticAlgorithmUI(QWidget):
         input_group.setLayout(input_layout)
         layout.addWidget(input_group)
 
-        # Algorithm buttons and output image areas
-        algorithm_layout = QVBoxLayout()
+        # Algorithm buttons
+        alg_buttons_layout = QVBoxLayout()
 
-        alg_buttons_layout = QHBoxLayout()
-        self.standard_alg_button = QPushButton("标准遗传算法")
-        self.standard_alg_button.clicked.connect(lambda: self.run_algorithm("standard"))
-        self.adaptive_alg_button = QPushButton("自适应遗传算法")
-        self.adaptive_alg_button.clicked.connect(lambda: self.run_algorithm("adaptive"))
-        alg_buttons_layout.addWidget(self.standard_alg_button)
-        alg_buttons_layout.addWidget(self.adaptive_alg_button)
-        algorithm_layout.addLayout(alg_buttons_layout)
+        self.standard_convergence_button = QPushButton("标准遗传算法的收敛值分析")
+        self.standard_convergence_button.clicked.connect(lambda: self.run_algorithm("standard_convergence", 0))
+        self.adaptive_convergence_button = QPushButton("自适应遗传算法的收敛值分析")
+        self.adaptive_convergence_button.clicked.connect(lambda: self.run_algorithm("adaptive_convergence", 0))
+        self.standard_speed_button = QPushButton("标准遗传算法的收敛速度分析")
+        self.standard_speed_button.clicked.connect(lambda: self.run_algorithm("standard_speed", 1))
+        self.adaptive_speed_button = QPushButton("自适应遗传算法的收敛速度分析")
+        self.adaptive_speed_button.clicked.connect(lambda: self.run_algorithm("adaptive_speed", 1))
+        alg_buttons_layout.addWidget(self.standard_convergence_button)
+        alg_buttons_layout.addWidget(self.adaptive_convergence_button)
+        alg_buttons_layout.addWidget(self.standard_speed_button)
+        alg_buttons_layout.addWidget(self.adaptive_speed_button)
+
+        layout.addLayout(alg_buttons_layout)
 
         # Output image groups
         self.standard_image_group = QGroupBox("标准遗传算法结果")
         self.standard_image_layout = QVBoxLayout()
         self.standard_image_group.setLayout(self.standard_image_layout)
-        algorithm_layout.addWidget(self.standard_image_group)
+        layout.addWidget(self.standard_image_group)
 
         self.adaptive_image_group = QGroupBox("自适应遗传算法结果")
         self.adaptive_image_layout = QVBoxLayout()
         self.adaptive_image_group.setLayout(self.adaptive_image_layout)
-        algorithm_layout.addWidget(self.adaptive_image_group)
-
-        layout.addLayout(algorithm_layout)
+        layout.addWidget(self.adaptive_image_group)
 
         self.setLayout(layout)
 
-    def run_algorithm(self, algorithm_type=None):
+    def run_algorithm(self, algorithm_type=None, analysis_type=None):
         global POP_SIZE, CROSSOVER_RATE, MUTATION_RATE, MUTATION_AMOUNT, N_GENERATIONS, CHECKTIME
         POP_SIZE = int(self.population_size_input.text())
         CROSSOVER_RATE = float(self.initial_crossover_rate_input.text())
@@ -470,14 +483,22 @@ class GeneticAlgorithmUI(QWidget):
         N_GENERATIONS = int(self.iterations_input.text())
         CHECKTIME = int(self.validation_iterations_input.text())
 
-        if algorithm_type == "standard":
-            # 调用标准遗传算法函数
-            x,y=GA()
-            self.create_standard_image_speed(x,y)
-        elif algorithm_type == "adaptive":
-            # 调用自适应遗传算法函数
-            x,y=AGA()
-            self.create_adaptive_image_amount(x,y)
+        if algorithm_type == "standard_convergence":
+            # 调用标准遗传算法函数，收敛值分析
+            x, y = GA(analysis_type)
+            self.create_standard_image_amount(x, y)
+        elif algorithm_type == "adaptive_convergence":
+            # 调用自适应遗传算法函数，收敛值分析
+            x, y = AGA(analysis_type)
+            self.create_adaptive_image_amount(x, y)
+        elif algorithm_type == "standard_speed":
+            # 调用标准遗传算法函数，收敛速度分析
+            x, y = GA(analysis_type)
+            self.create_standard_image_speed(x, y)
+        elif algorithm_type == "adaptive_speed":
+            # 调用自适应遗传算法函数，收敛速度分析
+            x, y = AGA(analysis_type)
+            self.create_adaptive_image_speed(x, y)
 
     def display_image(self, layout, image):
         # 清除原有的图片
@@ -507,11 +528,12 @@ class GeneticAlgorithmUI(QWidget):
     def create_standard_image_speed(self, x, y):
         fig = Figure(figsize=(5, 4))
         ax = fig.add_subplot(111)
-        ax.plot(x, y)
-        ax.set_xlabel('迭代次数')
-        ax.set_ylabel('每世代各种群的收敛值')
-        ax.set_title('收敛速度分析', fontsize=20)
         ax.set_ylim(0, 1)
+        for i in range(CHECKTIME):
+            ax.plot(x, y[i])
+            ax.set_xlabel('迭代次数')
+            ax.set_ylabel('每世代各种群的收敛值')
+            ax.set_title('收敛速度分析', fontsize=20)
         canvas = FigureCanvas(fig)
         self.display_image(self.standard_image_layout, canvas)
 
@@ -527,12 +549,15 @@ class GeneticAlgorithmUI(QWidget):
         self.display_image(self.adaptive_image_layout, canvas)
     def create_adaptive_image_speed(self,x,y):
         fig = Figure(figsize=(5, 4))
+
         ax = fig.add_subplot(111)
-        ax.plot(x, y)
-        ax.set_xlabel('迭代次数')
-        ax.set_ylabel('每世代各种群的收敛值')
-        ax.set_title('收敛速度分析', fontsize=20)
         ax.set_ylim(0, 1)
+        for i in range(CHECKTIME):
+            ax.plot(x, y[i])
+            ax.set_xlabel('迭代次数')
+            ax.set_ylabel('每世代各种群的收敛值')
+            ax.set_title('收敛速度分析', fontsize=20)
+
         canvas = FigureCanvas(fig)
         self.display_image(self.adaptive_image_layout, canvas)
 
