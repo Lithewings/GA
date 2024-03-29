@@ -22,9 +22,10 @@ ELITE_RATE=0.50
 X_BOUND = [-4, 4]
 Y_BOUND = [-4, 4]
 CATASTROPHE_RATE = 0.01
-#比较参数：POP_SIZE = 400，POP_SIZE = 400（精算）；POP_SIZE = 200,N_GENERATIONS = 48（速算）
+# 比较参数：POP_SIZE = 400，POP_SIZE = 400（精算）；POP_SIZE = 200,N_GENERATIONS = 48（速算）
 
 def AGA(q):
+    print("调用的是自适应")
     def F(x_1, x_2):
         n = 2
         a = 20
@@ -391,6 +392,7 @@ def GA(q):
         return x_pattern1,y_pattern1
     elif(q==0):
         return x_pattern0,y_pattern0
+
 
 
 

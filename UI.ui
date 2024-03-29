@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1266</width>
+    <width>1280</width>
     <height>646</height>
    </rect>
   </property>
@@ -74,7 +74,7 @@
     </font>
    </property>
    <property name="text">
-    <string>标准遗传算法结果</string>
+    <string>自适应遗传算法结果/标准遗传算法结果</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_11">
@@ -92,7 +92,7 @@
     </font>
    </property>
    <property name="text">
-    <string>自适应遗传算法结果</string>
+    <string>改进的自适应遗传算法结果</string>
    </property>
   </widget>
   <widget class="QWidget" name="horizontalLayoutWidget">
@@ -107,6 +107,9 @@
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QLabel" name="label_22">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="text">
        <string>TextLabel</string>
       </property>
@@ -132,7 +135,7 @@
     <enum>Qt::RightToLeft</enum>
    </property>
    <property name="text">
-    <string>标准遗传算法：收敛速度分析</string>
+    <string>自适应遗传算法结果/标准遗传算法结果：收敛速度分析</string>
    </property>
    <property name="default">
     <bool>false</bool>
@@ -159,7 +162,7 @@
     <enum>Qt::RightToLeft</enum>
    </property>
    <property name="text">
-    <string>标准遗传算法：收敛值分析  </string>
+    <string>自适应遗传算法结果/标准遗传算法结果：收敛值分析  </string>
    </property>
   </widget>
   <widget class="QWidget" name="horizontalLayoutWidget_2">
@@ -196,7 +199,7 @@
     </font>
    </property>
    <property name="text">
-    <string>自适应遗传算法：收敛速度分析</string>
+    <string>改进的自适应遗传算法：收敛速度分析</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_14">
@@ -214,7 +217,7 @@
     </font>
    </property>
    <property name="text">
-    <string>自适应遗传算法：收敛值分析</string>
+    <string>改进的自适应遗传算法：收敛值分析</string>
    </property>
   </widget>
   <widget class="QWidget" name="verticalLayoutWidget">
